@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>시험 응시 | EduAI Campus</title>
+
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <!-- Pretendard -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+
+    <style>
+
+        * {
+            font-family: Pretendard, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            color: #20263a;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ====================================================== */
+
+        .navbar {
+
+            height: 70px;
+
+            background: white;
+
+            border-bottom: 1px solid #e8eaf0;
+
+        }
+
+
+        .logo {
+
+            font-size: 22px;
+
+            font-weight: 800;
+
+            color: #5146e5;
+
+            text-decoration: none;
+
+        }
+
+
+        /* =====================================================
+           MAIN
+        ====================================================== */
+
+        .exam-container {
+
+            max-width: 1250px;
+
+            margin: 0 auto;
+
+            padding: 35px 20px;
+
+        }
+
+
+        /* =====================================================
+           EXAM HEADER
+        ====================================================== */
+
+        .exam-header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #171a3a,
+                    #5146e5
+                );
+
+            color: white;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .exam-title {
+
+            font-size: 26px;
+
+            font-weight: 800;
+
+        }
+
+
+        .exam-info {
+
+            color: rgba(255,255,255,.7);
+
+        }
+
+
+        /* =====================================================
+           TIMER
+        ====================================================== */
+
+        .timer-box {
+
+            background: rgba(255,255,255,.12);
+
+            border: 1px solid rgba(255,255,255,.2);
+
+            border-radius: 14px;
+
+            padding: 15px 20px;
+
+            text-align: center;
+
+        }
+
+
+        .timer-label {
+
+            font-size: 12px;
+
+            color: rgba(255,255,255,.7);
+
+        }
+
+
+        .timer {
+
+            font-size: 27px;
+
+            font-weight: 800;
+
+        }
+
+
+        .timer.warning {
+
+            color: #ffca28;
+
+        }
+
+
+        .timer.danger {
+
+            color: #ff5252;
+
+        }
+
+
+        /* =====================================================
+           QUESTION
+        ====================================================== */
+
+        .question-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 28px;
+
+            margin-bottom: 20px;
+
+            border: 1px solid #e9ebf2;
+
+            box-shadow:
+                0 7px 25px rgba(30,35,60,.05);
+
+        }
+
+
+        .question-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .question-number {
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 12px;
+
+            background: #eeeaff;
+
+            color: #5146e5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: 800;
+
+        }
+
+
+        .question-title {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            line-height: 1.7;
+
+        }
+
+
+        .question-score {
+
+            color: #7e8498;
+
+            font-size: 13px;
+
+        }
+
+
+        /* =====================================================
+           OPTION
+        ====================================================== */
+
+        .option-label {
+
+            display: block;
+
+            border: 1px solid #e1e4ec;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            margin-top: 10px;
+
+            cursor: pointer;
+
+            transition: .2s;
+
+        }
+
+
+        .option-label:hover {
+
+            border-color: #5146e5;
+
+            background: #faf9ff;
+
+        }
+
+
+        .option-label.selected {
+
+            border-color: #5146e5;
+
+            background: #f0efff;
+
+            color: #4036c8;
+
+        }
+
+
+        .option-label input {
+
+            display: none;
+
+        }
+
+
+        .option-number {
+
+            display: inline-flex;
+
+            width: 28px;
+
+            height: 28px;
+
+            border-radius: 50%;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #f0f1f5;
+
+            margin-right: 10px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+        }
+
+
+        .selected .option-number {
+
+            background: #5146e5;
+
+            color: white;
+
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ====================================================== */
+
+        .exam-sidebar {
+
+            position: sticky;
+
+            top: 90px;
+
+        }
+
+
+        .sidebar-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 22px;
+
+            border: 1px solid #e9ebf2;
+
+            box-shadow:
+                0 7px 25px rgba(30,35,60,.05);
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .sidebar-title {
+
+            font-weight: 800;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        /* =====================================================
+           QUESTION NAV
+        ====================================================== */
+
+        .question-nav {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 7px;
+
+        }
+
+
+        .question-nav button {
+
+            height: 38px;
+
+            border: 1px solid #e1e4ec;
+
+            background: white;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+        }
+
+
+        .question-nav button.answered {
+
+            background: #5146e5;
+
+            border-color: #5146e5;
+
+            color: white;
+
+        }
+
+
+        /* =====================================================
+           SUBMIT
+        ====================================================== */
+
+        .submit-btn {
+
+            width: 100%;
+
+            border: none;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #5146e5,
+                    #7659ff
+                );
+
+            color: white;
+
+            padding: 14px;
+
+            border-radius: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =====================================================
+           RESULT
+        ====================================================== */
+
+        #resultSection {
+
+            display: none;
+
+        }
+
+
+        .result-header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #171a3a,
+                    #5146e5
+                );
+
+            color: white;
+
+            border-radius: 20px;
+
+            padding: 40px;
+
+            text-align: center;
+
+        }
+
+
+        .score {
+
+            font-size: 65px;
+
+            font-weight: 900;
+
+        }
+
+
+        .score-message {
+
+            color: rgba(255,255,255,.75);
+
+        }
+
+
+        .result-stat {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            text-align: center;
+
+            border: 1px solid #e8eaf0;
+
+        }
+
+
+        .result-stat-number {
+
+            font-size: 25px;
+
+            font-weight: 800;
+
+        }
+
+
+        .correct {
+
+            color: #16a34a;
+
+        }
+
+
+        .wrong {
+
+            color: #dc2626;
+
+        }
+
+
+        /* =====================================================
+           RESULT QUESTION
+        ====================================================== */
+
+        .result-question {
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 25px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #e8eaf0;
+
+        }
+
+
+        .result-option {
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            margin-top: 7px;
+
+            background: #f7f8fb;
+
+        }
+
+
+        .result-option.answer {
+
+            background: #ecfdf3;
+
+            color: #047857;
+
+        }
+
+
+        .result-option.user-wrong {
+
+            background: #fef2f2;
+
+            color: #b91c1c;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
+
+        @media(max-width: 992px) {
+
+            .exam-sidebar {
+
+                position: static;
+
+                margin-top: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================== -->
+
+<nav class="navbar">
+
+    <div class="container-fluid px-4">
+
+
+        <a
+                class="logo"
+                th:href="@{/}">
+
+            <i class="bi bi-mortarboard-fill"></i>
+
+            EduAI Campus
+
+        </a>
+
+
+        <div>
+
+            <span class="text-secondary me-3">
+
+                김학생님
+
+            </span>
+
+
+            <a
+                    th:href="@{/mypage}"
+                    class="btn btn-outline-secondary btn-sm">
+
+                마이페이지
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================================
+     EXAM AREA
+========================================================== -->
+
+<div
+        id="examSection"
+        class="exam-container">
+
+
+    <!-- =====================================================
+         EXAM HEADER
+    ====================================================== -->
+
+    <div class="exam-header">
+
+
+        <div class="row align-items-center">
+
+
+            <div class="col-lg-8">
+
+
+                <div class="exam-title">
+
+                    Spring Boot 백엔드 개발 평가시험
+
+                </div>
+
+
+                <div class="exam-info mt-2">
+
+                    총 10문제 · 총점 100점 · 객관식
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-4 mt-3 mt-lg-0">
+
+
+                <div class="timer-box">
+
+
+                    <div class="timer-label">
+
+                        남은 시간
+
+                    </div>
+
+
+                    <div
+                            id="timer"
+                            class="timer">
+
+                        30:00
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <div class="row">
+
+
+        <!-- =================================================
+             QUESTIONS
+        ================================================== -->
+
+        <div class="col-lg-8">
+
+
+            <!-- =================================================
+                 QUESTION 1
+            ================================================== -->
+
+            <div
+                    class="question-card"
+                    data-question="1">
+
+
+                <div class="question-header">
+
+
+                    <div class="d-flex align-items-center gap-3">
+
+
+                        <div class="question-number">
+
+                            1
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="question-title">
+
+                                Spring Boot에서
+                                의존성 주입을 위해 사용하는
+                                대표적인 어노테이션은?
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="question-score">
+
+                        10점
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- 보기 -->
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q1"
+                            value="1">
+
+
+                    <span class="option-number">
+
+                        ①
+
+                    </span>
+
+                    @Autowired
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q1"
+                            value="2">
+
+
+                    <span class="option-number">
+
+                        ②
+
+                    </span>
+
+                    @Override
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q1"
+                            value="3">
+
+
+                    <span class="option-number">
+
+                        ③
+
+                    </span>
+
+                    @Entity
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q1"
+                            value="4">
+
+
+                    <span class="option-number">
+
+                        ④
+
+                    </span>
+
+                    @Table
+
+                </label>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 QUESTION 2
+            ================================================== -->
+
+            <div
+                    class="question-card"
+                    data-question="2">
+
+
+                <div class="question-header">
+
+
+                    <div class="d-flex align-items-center gap-3">
+
+
+                        <div class="question-number">
+
+                            2
+
+                        </div>
+
+
+                        <div class="question-title">
+
+                            Spring MVC에서
+                            HTTP 요청을 처리하는 Controller를
+                            정의할 때 사용하는 어노테이션은?
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="question-score">
+
+                        10점
+
+                    </div>
+
+
+                </div>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q2"
+                            value="1">
+
+                    <span class="option-number">
+
+                        ①
+
+                    </span>
+
+                    @Service
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q2"
+                            value="2">
+
+                    <span class="option-number">
+
+                        ②
+
+                    </span>
+
+                    @Controller
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q2"
+                            value="3">
+
+                    <span class="option-number">
+
+                        ③
+
+                    </span>
+
+                    @Repository
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q2"
+                            value="4">
+
+                    <span class="option-number">
+
+                        ④
+
+                    </span>
+
+                    @ComponentScan
+
+                </label>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 QUESTION 3
+            ================================================== -->
+
+            <div
+                    class="question-card"
+                    data-question="3">
+
+
+                <div class="question-header">
+
+
+                    <div class="d-flex align-items-center gap-3">
+
+
+                        <div class="question-number">
+
+                            3
+
+                        </div>
+
+
+                        <div class="question-title">
+
+                            REST API에서
+                            데이터를 조회할 때 일반적으로
+                            사용하는 HTTP Method는?
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="question-score">
+
+                        10점
+
+                    </div>
+
+
+                </div>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q3"
+                            value="1">
+
+                    <span class="option-number">
+
+                        ①
+
+                    </span>
+
+                    GET
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q3"
+                            value="2">
+
+                    <span class="option-number">
+
+                        ②
+
+                    </span>
+
+                    POST
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q3"
+                            value="3">
+
+                    <span class="option-number">
+
+                        ③
+
+                    </span>
+
+                    DELETE
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q3"
+                            value="4">
+
+                    <span class="option-number">
+
+                        ④
+
+                    </span>
+
+                    PATCH
+
+                </label>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 QUESTION 4
+            ================================================== -->
+
+            <div
+                    class="question-card"
+                    data-question="4">
+
+
+                <div class="question-header">
+
+
+                    <div class="d-flex align-items-center gap-3">
+
+
+                        <div class="question-number">
+
+                            4
+
+                        </div>
+
+
+                        <div class="question-title">
+
+                            Spring에서 비즈니스 로직을
+                            담당하는 계층에서 사용하는
+                            대표적인 어노테이션은?
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="question-score">
+
+                        10점
+
+                    </div>
+
+
+                </div>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q4"
+                            value="1">
+
+                    <span class="option-number">
+
+                        ①
+
+                    </span>
+
+                    @Service
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q4"
+                            value="2">
+
+                    <span class="option-number">
+
+                        ②
+
+                    </span>
+
+                    @Entity
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q4"
+                            value="3">
+
+                    <span class="option-number">
+
+                        ③
+
+                    </span>
+
+                    @Table
+
+                </label>
+
+
+                <label class="option-label">
+
+                    <input
+                            type="radio"
+                            name="q4"
+                            value="4">
+
+                    <span class="option-number">
+
+                        ④
+
+                    </span>
+
+                    @Id
+
+                </label>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SUBMIT
+            ================================================== -->
+
+            <div class="text-center my-5">
+
+
+                <button
+                        id="submitExam"
+                        class="submit-btn">
+
+                    <i class="bi bi-check2-circle me-2"></i>
+
+                    시험 제출하기
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT SIDEBAR
+        ================================================== -->
+
+        <div class="col-lg-4">
+
+
+            <div class="exam-sidebar">
+
+
+                <!-- 진행률 -->
+
+                <div class="sidebar-card">
+
+
+                    <div class="sidebar-title">
+
+                        시험 진행률
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span class="text-secondary">
+
+                            답변 완료
+
+                        </span>
+
+
+                        <strong id="progressText">
+
+                            0 / 4
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div
+                                id="progressBar"
+                                class="progress-bar"
+                                style="width:0%">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 문제 이동 -->
+
+                <div class="sidebar-card">
+
+
+                    <div class="sidebar-title">
+
+                        문제 목록
+
+                    </div>
+
+
+                    <div class="question-nav">
+
+
+                        <button data-target="1">
+
+                            1
+
+                        </button>
+
+
+                        <button data-target="2">
+
+                            2
+
+                        </button>
+
+
+                        <button data-target="3">
+
+                            3
+
+                        </button>
+
+
+                        <button data-target="4">
+
+                            4
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- 주의 -->
+
+                <div class="sidebar-card">
+
+
+                    <div class="sidebar-title">
+
+                        <i class="bi bi-info-circle me-1"></i>
+
+                        시험 안내
+
+                    </div>
+
+
+                    <ul class="small text-secondary mb-0 ps-3">
+
+                        <li class="mb-2">
+
+                            답변은 자동 저장됩니다.
+
+                        </li>
+
+
+                        <li class="mb-2">
+
+                            제한 시간이 지나면 자동 제출됩니다.
+
+                        </li>
+
+
+                        <li class="mb-2">
+
+                            제출 후 답변을 수정할 수 없습니다.
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     RESULT SECTION
+========================================================== -->
+
+<section
+        id="resultSection"
+        class="exam-container">
+
+
+    <!-- =====================================================
+         RESULT HEADER
+    ====================================================== -->
+
+    <div class="result-header">
+
+
+        <div>
+
+            <div class="fs-5">
+
+                시험이 종료되었습니다.
+
+            </div>
+
+
+            <div
+                    id="finalScore"
+                    class="score">
+
+                80점
+
+            </div>
+
+
+            <div class="score-message">
+
+                좋은 결과입니다! 조금만 더 복습해보세요.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         STAT
+    ====================================================== -->
+
+    <div class="row g-3 my-4">
+
+
+        <div class="col-md-4">
+
+            <div class="result-stat">
+
+                <div class="result-stat-number correct">
+
+                    8
+
+                </div>
+
+                <small class="text-secondary">
+
+                    정답
+
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="result-stat">
+
+                <div class="result-stat-number wrong">
+
+                    2
+
+                </div>
+
+                <small class="text-secondary">
+
+                    오답
+
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="result-stat">
+
+                <div class="result-stat-number">
+
+                    80%
+
+                </div>
+
+                <small class="text-secondary">
+
+                    정답률
+
+                </small>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         RESULT TITLE
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+        <h4 class="fw-bold">
+
+            문제별 채점 결과
+
+        </h4>
+
+
+        <button
+                class="btn btn-outline-danger"
+                onclick="goWrongNote()">
+
+            <i class="bi bi-journal-x me-1"></i>
+
+            오답노트 저장
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         RESULT QUESTIONS
+    ====================================================== -->
+
+    <div id="resultQuestions">
+
+
+        <!-- JS로 생성 -->
+
+    </div>
+
+
+
+    <div class="text-center mt-4">
+
+
+        <a
+                th:href="@{/mypage/exam}"
+                class="btn btn-primary px-5">
+
+            시험 결과 목록
+
+        </a>
+
+
+        <a
+                th:href="@{/}"
+                class="btn btn-outline-secondary px-5 ms-2">
+
+            홈으로
+
+        </a>
+
+
+    </div>
+
+
+</section>
+
+
+
+<script>
+
+
+    /* =========================================================
+       정답 데이터
+    ========================================================== */
+
+    const answers = {
+
+        1: "1",
+
+        2: "2",
+
+        3: "1",
+
+        4: "1"
+
+    };
+
+
+    /* =========================================================
+       문제 데이터
+    ========================================================== */
+
+    const questions = {
+
+        1: {
+
+            title:
+                "Spring Boot에서 의존성 주입을 위해 사용하는 대표적인 어노테이션은?",
+
+            options: [
+
+                "@Autowired",
+
+                "@Override",
+
+                "@Entity",
+
+                "@Table"
+
+            ],
+
+            answer: "1",
+
+            explanation:
+                "@Autowired는 Spring 컨테이너가 필요한 의존 객체를 자동으로 주입하도록 합니다."
+
+        },
+
+
+        2: {
+
+            title:
+                "Spring MVC에서 HTTP 요청을 처리하는 Controller를 정의할 때 사용하는 어노테이션은?",
+
+            options: [
+
+                "@Service",
+
+                "@Controller",
+
+                "@Repository",
+
+                "@ComponentScan"
+
+            ],
+
+            answer: "2",
+
+            explanation:
+                "@Controller는 Spring MVC의 Controller 클래스를 정의할 때 사용합니다."
+
+        },
+
+
+        3: {
+
+            title:
+                "REST API에서 데이터를 조회할 때 일반적으로 사용하는 HTTP Method는?",
+
+            options: [
+
+                "GET",
+
+                "POST",
+
+                "DELETE",
+
+                "PATCH"
+
+            ],
+
+            answer: "1",
+
+            explanation:
+                "GET은 서버의 데이터를 조회할 때 사용하는 HTTP Method입니다."
+
+        },
+
+
+        4: {
+
+            title:
+                "Spring에서 비즈니스 로직을 담당하는 계층에서 사용하는 대표적인 어노테이션은?",
+
+            options: [
+
+                "@Service",
+
+                "@Entity",
+
+                "@Table",
+
+                "@Id"
+
+            ],
+
+            answer: "1",
+
+            explanation:
+                "@Service는 서비스 계층의 비즈니스 로직을 담당하는 클래스를 표시합니다."
+
+        }
+
+    };
+
+
+
+    /* =========================================================
+       보기 선택 효과
+    ========================================================== */
+
+    document
+        .querySelectorAll(".option-label")
+        .forEach(label => {
+
+
+            label.addEventListener(
+                "click",
+                function() {
+
+
+                    const radio =
+                        this.querySelector(
+                            "input"
+                        );
+
+
+                    const name =
+                        radio.name;
+
+
+                    document
+                        .querySelectorAll(
+                            `input[name="${name}"]`
+                        )
+                        .forEach(input => {
+
+                            input
+                                .parentElement
+                                .classList
+                                .remove("selected");
+
+                        });
+
+
+                    this.classList.add("selected");
+
+
+                    updateProgress();
+
+
+                    saveAnswer(
+                        name,
+                        radio.value
+                    );
+
+                }
+            );
+
+        });
+
+
+
+    /* =========================================================
+       진행률
+    ========================================================== */
+
+    function updateProgress() {
+
+
+        const total =
+            Object.keys(questions).length;
+
+
+        let answered = 0;
+
+
+        for (
+            let i = 1;
+            i <= total;
+            i++
+        ) {
+
+            const selected =
+                document.querySelector(
+                    `input[name="q${i}"]:checked`
+                );
+
+
+            if (selected) {
+
+                answered++;
+
+            }
+
+        }
+
+
+        const percent =
+            (answered / total) * 100;
+
+
+        document
+            .getElementById("progressBar")
+            .style.width =
+                percent + "%";
+
+
+        document
+            .getElementById("progressText")
+            .innerText =
+                answered +
+                " / " +
+                total;
+
+
+
+        /* 문제 번호 */
+
+        document
+            .querySelectorAll(
+                ".question-nav button"
+            )
+            .forEach(button => {
+
+
+                const no =
+                    button.dataset.target;
+
+
+                const selected =
+                    document.querySelector(
+                        `input[name="q${no}"]:checked`
+                    );
+
+
+                if (selected) {
+
+                    button.classList.add(
+                        "answered"
+                    );
+
+                }
+                else {
+
+                    button.classList.remove(
+                        "answered"
+                    );
+
+                }
+
+            });
+
+    }
+
+
+
+    /* =========================================================
+       답안 자동 저장
+    ========================================================== */
+
+    function saveAnswer(
+        questionNo,
+        answer
+    ) {
+
+
+        console.log(
+            "답안 자동 저장:",
+            questionNo,
+            answer
+        );
+
+
+        /*
+         * 실제 프로젝트에서는
+         *
+         * POST /exam/save-answer
+         *
+         * 로 Spring Boot에 저장
+         */
+
+    }
+
+
+
+    /* =========================================================
+       문제 이동
+    ========================================================== */
+
+    document
+        .querySelectorAll(
+            ".question-nav button"
+        )
+        .forEach(button => {
+
+
+            button.addEventListener(
+                "click",
+                function() {
+
+
+                    const no =
+                        this.dataset.target;
+
+
+                    const target =
+                        document.querySelector(
+                            `[data-question="${no}"]`
+                        );
+
+
+                    if (target) {
+
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                    }
+
+                }
+            );
+
+        });
+
+
+
+    /* =========================================================
+       시험 제출
+    ========================================================== */
+
+    document
+        .getElementById("submitExam")
+        .addEventListener(
+            "click",
+            submitExam
+        );
+
+
+
+    function submitExam() {
+
+
+        const total =
+            Object.keys(questions).length;
+
+
+        let unanswered = 0;
+
+
+        for (
+            let i = 1;
+            i <= total;
+            i++
+        ) {
+
+
+            const selected =
+                document.querySelector(
+                    `input[name="q${i}"]:checked`
+                );
+
+
+            if (!selected) {
+
+                unanswered++;
+
+            }
+
+        }
+
+
+
+        if (unanswered > 0) {
+
+
+            if (
+                !confirm(
+                    "아직 답하지 않은 문제가 " +
+                    unanswered +
+                    "개 있습니다.\n그래도 제출하시겠습니까?"
+                )
+            ) {
+
+                return;
+
+            }
+
+        }
+
+
+
+        if (
+            !confirm(
+                "시험을 제출하시겠습니까?\n제출 후에는 답변을 수정할 수 없습니다."
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        gradeExam();
+
+    }
+
+
+
+    /* =========================================================
+       자동 채점
+    ========================================================== */
+
+    function gradeExam() {
+
+
+        let correctCount = 0;
+
+
+        let wrongCount = 0;
+
+
+        let totalScore = 0;
+
+
+        const scorePerQuestion = 10;
+
+
+        let resultHTML = "";
+
+
+
+        Object.keys(questions)
+            .forEach(
+                questionNo => {
+
+
+                    const question =
+                        questions[questionNo];
+
+
+                    const selected =
+                        document.querySelector(
+                            `input[name="q${questionNo}"]:checked`
+                        );
+
+
+                    const userAnswer =
+                        selected
+                        ? selected.value
+                        : null;
+
+
+                    const isCorrect =
+                        userAnswer ===
+                        question.answer;
+
+
+
+                    if (isCorrect) {
+
+                        correctCount++;
+
+                        totalScore +=
+                            scorePerQuestion;
+
+                    }
+                    else {
+
+                        wrongCount++;
+
+                    }
+
+
+
+                    /* ======================================
+                       결과 문제
+                    ====================================== */
+
+                    resultHTML += `
+
+                        <div class="result-question">
+
+                            <div class="d-flex justify-content-between">
+
+                                <strong>
+
+                                    ${questionNo}. ${question.title}
+
+                                </strong>
+
+
+                                <span class="${
+                                    isCorrect
+                                    ? "correct"
+                                    : "wrong"
+                                } fw-bold">
+
+                                    ${
+                                        isCorrect
+                                        ? "정답"
+                                        : "오답"
+                                    }
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="mt-3">
+
+                                ${
+                                    question.options
+                                    .map(
+                                        (option, index) => {
+
+                                            const number =
+                                                index + 1;
+
+                                            const correct =
+                                                String(number)
+                                                === String(
+                                                    question.answer
+                                                );
+
+                                            const userWrong =
+                                                String(number)
+                                                === String(
+                                                    userAnswer
+                                                )
+                                                && !correct;
+
+
+                                            return `
+
+                                                <div class="
+                                                    result-option
+                                                    ${
+                                                        correct
+                                                        ? "answer"
+                                                        : ""
+                                                    }
+                                                    ${
+                                                        userWrong
+                                                        ? "user-wrong"
+                                                        : ""
+                                                    }
+                                                ">
+
+                                                    <strong>
+
+                                                        ${number}.
+
+                                                    </strong>
+
+                                                    ${option}
+
+
+                                                    ${
+                                                        correct
+                                                        ? `
+                                                            <span class="float-end">
+
+                                                                <i class="bi bi-check-circle-fill"></i>
+
+                                                                정답
+
+                                                            </span>
+                                                          `
+                                                        : ""
+                                                    }
+
+
+                                                    ${
+                                                        userWrong
+                                                        ? `
+                                                            <span class="float-end">
+
+                                                                <i class="bi bi-x-circle-fill"></i>
+
+                                                                내 답
+
+                                                            </span>
+                                                          `
+                                                        : ""
+                                                    }
+
+                                                </div>
+
+                                            `;
+
+                                        }
+                                    )
+                                    .join("")
+                                }
+
+                            </div>
+
+
+                            <div
+                                    class="mt-3 p-3 rounded"
+                                    style="background:#f7f8fb;">
+
+
+                                <div class="fw-bold mb-1">
+
+                                    <i class="bi bi-lightbulb text-warning me-1"></i>
+
+                                    AI 해설
+
+                                </div>
+
+
+                                <div class="small text-secondary">
+
+                                    ${question.explanation}
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+
+        /* =====================================================
+           점수 표시
+        ====================================================== */
+
+        document
+            .getElementById("finalScore")
+            .innerText =
+                totalScore + "점";
+
+
+
+        /* =====================================================
+           결과 화면
+        ====================================================== */
+
+        document
+            .getElementById("resultQuestions")
+            .innerHTML =
+                resultHTML;
+
+
+
+        document
+            .getElementById("examSection")
+            .style.display =
+                "none";
+
+
+        document
+            .getElementById("resultSection")
+            .style.display =
+                "block";
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+
+
+        /* =====================================================
+           실제 서버 전송
+        ====================================================== */
+
+        sendExamResult(
+            totalScore,
+            correctCount,
+            wrongCount
+        );
+
+    }
+
+
+
+    /* =========================================================
+       시험 결과 서버 저장
+    ========================================================== */
+
+    function sendExamResult(
+        totalScore,
+        correctCount,
+        wrongCount
+    ) {
+
+
+        /*
+         * 실제 Spring Boot에서는
+         *
+         * POST /exam/submit
+         *
+         * 으로 전달
+         */
+
+
+        const result = {
+
+            examNo: 1,
+
+            totalScore:
+                totalScore,
+
+            correctCount:
+                correctCount,
+
+            wrongCount:
+                wrongCount
+
+        };
+
+
+        console.log(
+            "시험 결과:",
+            result
+        );
+
+    }
+
+
+
+    /* =========================================================
+       오답노트
+    ========================================================== */
+
+    function goWrongNote() {
+
+
+        alert(
+            "오답 문제가 오답노트에 저장되었습니다."
+        );
+
+
+        /*
+         * 실제 구현
+         *
+         * wrong_answer_vector
+         *
+         * 에 AI 분석 데이터를 저장
+         */
+
+        location.href =
+            "/mypage/wrong";
+
+    }
+
+
+
+    /* =========================================================
+       타이머
+    ========================================================== */
+
+    let remainingSeconds = 30 * 60;
+
+
+
+    const timer =
+        setInterval(
+            function() {
+
+
+                remainingSeconds--;
+
+
+                if (
+                    remainingSeconds <= 0
+                ) {
+
+
+                    clearInterval(timer);
+
+
+                    alert(
+                        "시험 시간이 종료되어 자동 제출됩니다."
+                    );
+
+
+                    gradeExam();
+
+
+                    return;
+
+                }
+
+
+
+                const minutes =
+                    Math.floor(
+                        remainingSeconds / 60
+                    );
+
+
+                const seconds =
+                    remainingSeconds % 60;
+
+
+
+                const timerElement =
+                    document.getElementById(
+                        "timer"
+                    );
+
+
+                timerElement.innerText =
+
+                    String(minutes)
+                        .padStart(2, "0")
+
+                    +
+
+                    ":"
+
+                    +
+
+                    String(seconds)
+                        .padStart(2, "0");
+
+
+
+                /* =========================================
+                   5분 이하
+                ========================================== */
+
+                if (
+                    remainingSeconds <= 300
+                ) {
+
+                    timerElement.classList.add(
+                        "danger"
+                    );
+
+                }
+
+                else if (
+                    remainingSeconds <= 600
+                ) {
+
+                    timerElement.classList.add(
+                        "warning"
+                    );
+
+                }
+
+
+            },
+            1000
+        );
+
+
+</script>
+
+
+</body>
+
+</html>

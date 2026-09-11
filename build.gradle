@@ -1,0 +1,66 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.1.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.asciidoctor.jvm.convert' version '4.0.5'
+}
+
+group = 'com.sist'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-webservices'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	/* mybatis */
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+	/* ai */
+	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai:2.0.1'
+	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai-embedding:2.0.1'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc17'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-jdbc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-restdocs'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webservices-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+	testImplementation 'org.testcontainers:testcontainers-oracle-free'
+	testImplementation 'org.testcontainers:testcontainers-postgresql'
+	testCompileOnly 'org.projectlombok:lombok'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
+tasks.named('asciidoctor') {
+	inputs.dir snippetsDir
+	dependsOn test
+}

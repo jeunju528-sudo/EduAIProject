@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>EduAI 관리자</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+<style>
+
+* {
+    font-family: Pretendard, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f5f6fa;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+
+    position: fixed;
+
+    width: 250px;
+    height: 100vh;
+
+    background: #171a3a;
+
+    color: white;
+}
+
+.logo {
+
+    padding: 25px;
+
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.sidebar-menu {
+
+    padding: 15px;
+}
+
+.sidebar-menu a {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    margin-bottom: 5px;
+
+    color: #b9bdd3;
+
+    text-decoration: none;
+
+    border-radius: 10px;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+
+    background: #5146e5;
+
+    color: white;
+}
+
+/* MAIN */
+
+.main {
+
+    margin-left: 250px;
+}
+
+/* HEADER */
+
+.header {
+
+    height: 75px;
+
+    background: white;
+
+    border-bottom: 1px solid #eee;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 35px;
+}
+
+/* CONTENT */
+
+.content {
+
+    padding: 35px;
+}
+
+/* STAT */
+
+.stat-card {
+
+    border: none;
+
+    border-radius: 16px;
+
+    background: white;
+
+    padding: 25px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,.04);
+}
+
+.stat-icon {
+
+    width: 50px;
+    height: 50px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eeeaff;
+
+    color: #5146e5;
+
+    font-size: 22px;
+}
+
+.stat-number {
+
+    font-size: 28px;
+
+    font-weight: 800;
+}
+
+/* CARD */
+
+.admin-card {
+
+    background: white;
+
+    border-radius: 16px;
+
+    border: none;
+
+    padding: 25px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,.04);
+}
+
+/* STATUS */
+
+.status {
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+}
+
+.normal {
+    background: #e7f8ee;
+    color: #159447;
+}
+
+.warning {
+    background: #fff4db;
+    color: #d89000;
+}
+
+.danger {
+    background: #ffe8e8;
+    color: #dc3545;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================
+     SIDEBAR
+===================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <i class="bi bi-mortarboard-fill"></i>
+
+        EduAI Admin
+
+    </div>
+
+
+    <div class="sidebar-menu">
+
+        <a href="#" class="active">
+            <i class="bi bi-grid"></i>
+            대시보드
+        </a>
+
+        <a href="#">
+            <i class="bi bi-people"></i>
+            학생 관리
+        </a>
+
+        <a href="#">
+            <i class="bi bi-book"></i>
+            강의 관리
+        </a>
+
+        <a href="#">
+            <i class="bi bi-pencil-square"></i>
+            시험 관리
+        </a>
+
+        <a href="#">
+            <i class="bi bi-calendar-check"></i>
+            출결 관리
+        </a>
+
+        <a href="#">
+            <i class="bi bi-robot"></i>
+            AI 학습 분석
+        </a>
+
+        <a href="#">
+            <i class="bi bi-bar-chart"></i>
+            통계
+        </a>
+
+        <hr>
+
+        <a href="#">
+            <i class="bi bi-gear"></i>
+            시스템 설정
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================
+     MAIN
+===================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div>
+
+            <strong>
+                관리자 대시보드
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span class="me-3">
+                관리자님
+            </span>
+
+            <button class="btn btn-outline-secondary btn-sm">
+                로그아웃
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <div class="mb-4">
+
+            <h3 class="fw-bold">
+                안녕하세요, 관리자님 👋
+            </h3>
+
+            <p class="text-secondary">
+                오늘의 교육센터 현황을 확인하세요.
+            </p>
+
+        </div>
+
+
+        <!-- STAT -->
+
+        <div class="row g-4 mb-4">
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <p class="text-secondary mt-3 mb-1">
+                        전체 학생
+                    </p>
+
+                    <div class="stat-number">
+                        428
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+
+                    <p class="text-secondary mt-3 mb-1">
+                        운영 강의
+                    </p>
+
+                    <div class="stat-number">
+                        24
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-pencil"></i>
+                    </div>
+
+                    <p class="text-secondary mt-3 mb-1">
+                        시험 응시
+                    </p>
+
+                    <div class="stat-number">
+                        1,284
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+
+                    <p class="text-secondary mt-3 mb-1">
+                        평균 진도율
+                    </p>
+
+                    <div class="stat-number">
+                        76%
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDENT -->
+
+        <div class="admin-card mb-4">
+
+            <div class="d-flex justify-content-between mb-4">
+
+                <div>
+
+                    <h5 class="fw-bold">
+                        학생 학습 상태
+                    </h5>
+
+                    <p class="text-secondary mb-0">
+                        AI가 학습 데이터를 분석한 결과입니다.
+                    </p>
+
+                </div>
+
+                <button class="btn btn-outline-primary">
+                    전체 학생
+                </button>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>학생</th>
+
+                        <th>수강과정</th>
+
+                        <th>진도율</th>
+
+                        <th>최근 시험</th>
+
+                        <th>상태</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <tr>
+
+                        <td>
+                            김학생
+                        </td>
+
+                        <td>
+                            Java/Spring 과정
+                        </td>
+
+                        <td>
+                            92%
+                        </td>
+
+                        <td>
+                            87점
+                        </td>
+
+                        <td>
+                            <span class="status normal">
+                                정상
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            이학생
+                        </td>
+
+                        <td>
+                            AI 개발 과정
+                        </td>
+
+                        <td>
+                            61%
+                        </td>
+
+                        <td>
+                            68점
+                        </td>
+
+                        <td>
+                            <span class="status warning">
+                                주의
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            박학생
+                        </td>
+
+                        <td>
+                            Spring Boot
+                        </td>
+
+                        <td>
+                            32%
+                        </td>
+
+                        <td>
+                            42점
+                        </td>
+
+                        <td>
+                            <span class="status danger">
+                                위험
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTTOM -->
+
+        <div class="row g-4">
+
+
+            <div class="col-lg-6">
+
+                <div class="admin-card">
+
+                    <h5 class="fw-bold mb-4">
+                        최근 시험 현황
+                    </h5>
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Java OOP 평가
+                        </span>
+
+                        <strong>
+                            87%
+                        </strong>
+
+                    </div>
+
+                    <div class="progress mb-4">
+
+                        <div class="progress-bar"
+                             style="width:87%">
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Spring Boot 평가
+                        </span>
+
+                        <strong>
+                            73%
+                        </strong>
+
+                    </div>
+
+                    <div class="progress">
+
+                        <div class="progress-bar bg-success"
+                             style="width:73%">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-6">
+
+                <div class="admin-card">
+
+                    <h5 class="fw-bold mb-4">
+                        AI 학습 위험 학생
+                    </h5>
+
+                    <div class="alert alert-danger">
+                        <strong>박학생</strong>
+                        <br>
+                        최근 7일간 학습 활동이 감소했습니다.
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <strong>이학생</strong>
+                        <br>
+                        시험 평균 점수가 지속적으로 하락하고 있습니다.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+</body>
+
+</html>

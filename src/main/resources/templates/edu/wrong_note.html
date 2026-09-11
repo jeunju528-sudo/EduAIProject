@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>오답노트 | EduAI Campus</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet">
+
+    <!-- Pretendard -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Pretendard", sans-serif;
+            background: #f6f7fb;
+            color: #202334;
+        }
+
+        /* =========================
+           Sidebar
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #171a3a;
+            color: #fff;
+            padding: 25px 16px;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            padding: 0 12px 30px;
+        }
+
+        .logo span {
+            color: #7c6cff;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            color: #8d91b5;
+            margin: 20px 12px 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #bfc2d9;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin-bottom: 5px;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .menu-item.active {
+            color: #fff;
+            background: linear-gradient(
+                135deg,
+                #6257e8,
+                #7668ff
+            );
+            box-shadow: 0 8px 20px rgba(98,87,232,0.3);
+        }
+
+        .menu-item i {
+            font-size: 18px;
+        }
+
+        /* =========================
+           Main
+        ========================= */
+
+        .main {
+            margin-left: 240px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 72px;
+            background: #fff;
+            border-bottom: 1px solid #eceef5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+        }
+
+        .page-title {
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(
+                135deg,
+                #6257e8,
+                #9b7cff
+            );
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        /* =========================
+           Content
+        ========================= */
+
+        .content {
+            padding: 35px;
+            max-width: 1450px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #777c91;
+            margin: 0;
+        }
+
+        /* =========================
+           Summary
+        ========================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 22px;
+            border: 1px solid #eceef5;
+            box-shadow: 0 5px 20px rgba(30,35,70,0.04);
+        }
+
+        .summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0efff;
+            color: #5d52e8;
+            font-size: 21px;
+        }
+
+        .summary-title {
+            color: #777c91;
+            font-size: 14px;
+        }
+
+        .summary-number {
+            font-size: 30px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        /* =========================
+           AI Analysis
+        ========================= */
+
+        .ai-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(
+                135deg,
+                #171a3a,
+                #302b68,
+                #5146e5
+            );
+            color: white;
+            border-radius: 20px;
+            padding: 27px;
+            margin-bottom: 28px;
+        }
+
+        .ai-card::after {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            right: -70px;
+            top: -90px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .ai-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .ai-description {
+            color: #d9d9f0;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .ai-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ai-tag {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 30px;
+            padding: 8px 13px;
+            font-size: 13px;
+        }
+
+        /* =========================
+           Toolbar
+        ========================= */
+
+        .toolbar {
+            background: #fff;
+            border: 1px solid #eceef5;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 20px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .filter-btn {
+            border: 1px solid #e2e4ed;
+            background: white;
+            border-radius: 9px;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #5c52e7;
+            color: white;
+            border-color: #5c52e7;
+        }
+
+        .search-box {
+            position: relative;
+            width: 260px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 13px;
+            top: 11px;
+            color: #999;
+        }
+
+        .search-box input {
+            width: 100%;
+            border: 1px solid #e1e3ec;
+            border-radius: 10px;
+            padding: 9px 12px 9px 38px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #6257e8;
+        }
+
+        /* =========================
+           Wrong Answer Card
+        ========================= */
+
+        .wrong-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .wrong-card {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #eceef5;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(30,35,70,0.04);
+            transition: 0.2s;
+        }
+
+        .wrong-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30,35,70,0.08);
+        }
+
+        .question-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 17px;
+        }
+
+        .question-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subject-badge {
+            background: #eeedff;
+            color: #574ce0;
+            border-radius: 7px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .difficulty-badge {
+            background: #f3f4f7;
+            color: #707589;
+            border-radius: 7px;
+            padding: 5px 9px;
+            font-size: 12px;
+        }
+
+        .question-number {
+            color: #8b8fa1;
+            font-size: 13px;
+        }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: 750;
+            line-height: 1.55;
+            margin-bottom: 20px;
+        }
+
+        /* =========================
+           Answer Area
+        ========================= */
+
+        .answer-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .answer-item {
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 14px;
+        }
+
+        .my-answer {
+            background: #fff1f1;
+            border: 1px solid #ffd5d5;
+        }
+
+        .correct-answer {
+            background: #effaf3;
+            border: 1px solid #c9eed6;
+        }
+
+        .answer-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .my-answer .answer-label {
+            color: #e05252;
+        }
+
+        .correct-answer .answer-label {
+            color: #1c9b52;
+        }
+
+        /* =========================
+           Explanation
+        ========================= */
+
+        .explanation {
+            background: #f7f8fc;
+            border-radius: 12px;
+            padding: 17px;
+            margin-bottom: 20px;
+        }
+
+        .explanation-title {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #4f5368;
+        }
+
+        .explanation-text {
+            color: #686d80;
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* =========================
+           Buttons
+        ========================= */
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .date-text {
+            font-size: 12px;
+            color: #9699a8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-review {
+            border: 1px solid #6257e8;
+            color: #6257e8;
+            background: white;
+            border-radius: 9px;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .btn-review:hover {
+            background: #6257e8;
+            color: white;
+        }
+
+        .btn-complete {
+            border: none;
+            color: white;
+            background: #252943;
+            border-radius: 9px;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .btn-complete:hover {
+            background: #171a3a;
+        }
+
+        /* =========================
+           Empty
+        ========================= */
+
+        .empty {
+            background: white;
+            border: 1px solid #eceef5;
+            border-radius: 18px;
+            padding: 70px 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .empty i {
+            font-size: 55px;
+            color: #bfc2d1;
+        }
+
+        .empty h4 {
+            margin-top: 15px;
+            font-weight: 800;
+        }
+
+        .empty p {
+            color: #888d9e;
+        }
+
+        /* =========================
+           Mobile
+        ========================= */
+
+        @media (max-width: 992px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .logo {
+                font-size: 0;
+                text-align: center;
+            }
+
+            .logo span {
+                font-size: 24px;
+            }
+
+            .menu-title {
+                display: none;
+            }
+
+            .menu-item {
+                justify-content: center;
+                padding: 13px;
+            }
+
+            .menu-item span {
+                display: none;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .answer-box {
+                grid-template-columns: 1fr;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .action-buttons button {
+                flex: 1;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     Sidebar
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        EduAI <span>Campus</span>
+    </div>
+
+
+    <div class="menu-title">
+        학습관리
+    </div>
+
+
+    <a href="/student/dashboard"
+       class="menu-item">
+
+        <i class="bi bi-grid-1x2-fill"></i>
+
+        <span>대시보드</span>
+
+    </a>
+
+
+    <a href="/student/course"
+       class="menu-item">
+
+        <i class="bi bi-play-circle-fill"></i>
+
+        <span>내 강의</span>
+
+    </a>
+
+
+    <a href="/student/exam"
+       class="menu-item">
+
+        <i class="bi bi-file-earmark-text-fill"></i>
+
+        <span>시험</span>
+
+    </a>
+
+
+    <a href="/exam/result"
+       class="menu-item">
+
+        <i class="bi bi-bar-chart-fill"></i>
+
+        <span>시험 결과</span>
+
+    </a>
+
+
+    <a href="/exam/wrong-note"
+       class="menu-item active">
+
+        <i class="bi bi-journal-x"></i>
+
+        <span>오답노트</span>
+
+    </a>
+
+
+    <a href="/student/learning"
+       class="menu-item">
+
+        <i class="bi bi-graph-up-arrow"></i>
+
+        <span>학습 분석</span>
+
+    </a>
+
+
+    <div class="menu-title">
+        내 정보
+    </div>
+
+
+    <a href="/student/mypage"
+       class="menu-item">
+
+        <i class="bi bi-person-circle"></i>
+
+        <span>마이페이지</span>
+
+    </a>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+     Main
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- Topbar -->
+
+    <header class="topbar">
+
+        <div class="page-title">
+            오답노트
+        </div>
+
+
+        <div class="user-area">
+
+            <div class="user-avatar">
+                <span sec:authentication="name">홍</span>
+            </div>
+
+            <span
+                sec:authentication="principal.member.name">
+                홍길동
+            </span>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- Content -->
+
+    <section class="content">
+
+
+        <!-- Page Header -->
+
+        <div class="page-header">
+
+            <h1>
+                📕 나의 오답노트
+            </h1>
+
+            <p>
+                틀린 문제를 다시 확인하고 부족한 개념을 보완해보세요.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             Summary
+        ================================================== -->
+
+        <div class="summary-grid">
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div>
+
+                        <div class="summary-title">
+                            전체 오답
+                        </div>
+
+                        <div class="summary-number"
+                             th:text="${wrongList != null ? wrongList.size() : 0}">
+                            32
+                        </div>
+
+                    </div>
+
+                    <div class="summary-icon">
+                        <i class="bi bi-journal-x"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div>
+
+                        <div class="summary-title">
+                            복습 완료
+                        </div>
+
+                        <div class="summary-number"
+                             id="reviewCompleteCount">
+                            18
+                        </div>
+
+                    </div>
+
+                    <div class="summary-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div>
+
+                        <div class="summary-title">
+                            복습 필요
+                        </div>
+
+                        <div class="summary-number"
+                             id="reviewRemainCount">
+                            14
+                        </div>
+
+                    </div>
+
+                    <div class="summary-icon">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             AI Analysis
+        ================================================== -->
+
+        <div class="ai-card">
+
+            <div class="ai-content">
+
+                <div class="ai-title">
+
+                    <i class="bi bi-stars"></i>
+
+                    AI 학습 분석
+
+                </div>
+
+
+                <div class="ai-description">
+
+                    지금까지 틀린 문제를 AI가 분석하여
+                    취약한 학습 영역을 찾아드립니다.
+
+                </div>
+
+
+                <div class="ai-tags">
+
+                    <div class="ai-tag">
+                        Java 객체지향
+                    </div>
+
+                    <div class="ai-tag">
+                        Spring DI
+                    </div>
+
+                    <div class="ai-tag">
+                        SQL JOIN
+                    </div>
+
+                    <div class="ai-tag">
+                        복습 추천 3개
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             Toolbar
+        ================================================== -->
+
+        <div class="toolbar">
+
+
+            <div class="filter-buttons">
+
+                <button
+                    class="filter-btn active"
+                    onclick="filterCategory('all', this)">
+                    전체
+                </button>
+
+                <button
+                    class="filter-btn"
+                    onclick="filterCategory('Java', this)">
+                    Java
+                </button>
+
+                <button
+                    class="filter-btn"
+                    onclick="filterCategory('SQL', this)">
+                    SQL
+                </button>
+
+                <button
+                    class="filter-btn"
+                    onclick="filterCategory('Spring', this)">
+                    Spring
+                </button>
+
+                <button
+                    class="filter-btn"
+                    onclick="filterCategory('AI', this)">
+                    AI
+                </button>
+
+            </div>
+
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="문제 검색..."
+                    onkeyup="searchQuestion()">
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             Wrong Answer List
+        ================================================== -->
+
+        <div class="wrong-list"
+             id="wrongList">
+
+
+            <!--
+                Thymeleaf 반복문
+
+                wrongList =
+                List<WrongAnswerVO>
+            -->
+
+            <div
+                class="wrong-card"
+                th:each="item : ${wrongList}"
+                th:data-theme="${item.theme}">
+
+
+                <!-- 문제 상단 -->
+
+                <div class="question-top">
+
+                    <div class="question-info">
+
+                        <span
+                            class="subject-badge"
+                            th:text="${item.theme}">
+                            Java
+                        </span>
+
+                        <span
+                            class="difficulty-badge"
+                            th:text="${item.difficulty}">
+                            중급
+                        </span>
+
+                    </div>
+
+
+                    <div class="question-number">
+
+                        문제 #
+                        <span th:text="${item.questionNo}">
+                            101
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 문제 -->
+
+                <div class="question-title"
+                     th:text="${item.title}">
+
+                    객체지향의 특징으로 올바르지 않은 것은?
+
+                </div>
+
+
+
+                <!-- 내 답 / 정답 -->
+
+                <div class="answer-box">
+
+
+                    <div class="answer-item my-answer">
+
+                        <span class="answer-label">
+
+                            <i class="bi bi-x-circle-fill"></i>
+
+                            내가 선택한 답
+
+                        </span>
+
+
+                        <span th:text="${item.userAnswer}">
+                            ③ 상속은 객체의 상태를 복사한다.
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="answer-item correct-answer">
+
+                        <span class="answer-label">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            정답
+
+                        </span>
+
+
+                        <span th:text="${item.answer}">
+                            ② 상속은 클래스 간 관계를 표현한다.
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- 해설 -->
+
+                <div class="explanation">
+
+                    <div class="explanation-title">
+
+                        <i class="bi bi-lightbulb-fill"></i>
+
+                        문제 해설
+
+                    </div>
+
+
+                    <p
+                        class="explanation-text"
+                        th:text="${item.description}">
+
+                        상속은 부모 클래스의 속성과 기능을
+                        자식 클래스가 확장하여 사용하는
+                        객체지향 프로그래밍의 핵심 특징입니다.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- 하단 -->
+
+                <div class="card-footer">
+
+
+                    <div class="date-text">
+
+                        <i class="bi bi-clock"></i>
+
+                        최근 시험에서 틀린 문제
+
+                    </div>
+
+
+                    <div class="action-buttons">
+
+
+                        <!-- 다시 풀기 -->
+
+                        <button
+                            class="btn-review"
+                            th:onclick="'retryQuestion(' + ${item.questionNo} + ')'">
+
+                            <i class="bi bi-arrow-repeat"></i>
+
+                            다시 풀기
+
+                        </button>
+
+
+
+                        <!-- 복습 완료 -->
+
+                        <button
+                            class="btn-complete"
+                            onclick="completeReview(this)">
+
+                            <i class="bi bi-check2"></i>
+
+                            복습 완료
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             Empty
+        ================================================== -->
+
+        <div
+            class="empty"
+            id="emptyBox">
+
+            <i class="bi bi-journal-check"></i>
+
+            <h4>
+                오답이 없습니다.
+            </h4>
+
+            <p>
+                모든 문제를 잘 풀고 있습니다! 👍
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     Bootstrap
+===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+
+<script>
+
+
+/* =====================================================
+   검색
+===================================================== */
+
+function searchQuestion() {
+
+    const keyword =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+
+    const cards =
+        document.querySelectorAll(".wrong-card");
+
+
+    let visibleCount = 0;
+
+
+    cards.forEach(card => {
+
+        const text =
+            card.innerText.toLowerCase();
+
+
+        if (text.includes(keyword)) {
+
+            card.style.display = "";
+
+            visibleCount++;
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+
+    checkEmpty(visibleCount);
+
+}
+
+
+
+/* =====================================================
+   카테고리 필터
+===================================================== */
+
+function filterCategory(category, button) {
+
+
+    // 모든 버튼 active 제거
+
+    document
+        .querySelectorAll(".filter-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    // 현재 버튼 active
+
+    button.classList.add("active");
+
+
+    const cards =
+        document.querySelectorAll(".wrong-card");
+
+
+    let visibleCount = 0;
+
+
+    cards.forEach(card => {
+
+
+        const theme =
+            card.dataset.theme;
+
+
+        if (
+            category === "all"
+            ||
+            theme === category
+        ) {
+
+            card.style.display = "";
+
+            visibleCount++;
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+
+    checkEmpty(visibleCount);
+
+}
+
+
+
+/* =====================================================
+   검색 결과가 없는 경우
+===================================================== */
+
+function checkEmpty(count) {
+
+    const emptyBox =
+        document.getElementById("emptyBox");
+
+
+    if (count === 0) {
+
+        emptyBox.style.display = "block";
+
+    } else {
+
+        emptyBox.style.display = "none";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   다시 풀기
+===================================================== */
+
+function retryQuestion(questionNo) {
+
+
+    /*
+        실제 서버에서는
+
+        /exam/retry?questionNo=101
+
+        형태로 이동
+    */
+
+    location.href =
+        "/exam/retry?questionNo="
+        + questionNo;
+
+}
+
+
+
+/* =====================================================
+   복습 완료
+===================================================== */
+
+function completeReview(button) {
+
+
+    const card =
+        button.closest(".wrong-card");
+
+
+    if (!card) {
+        return;
+    }
+
+
+    // 카드 스타일 변경
+
+    card.style.opacity = "0.55";
+
+
+    // 버튼 변경
+
+    button.innerHTML =
+        '<i class="bi bi-check-circle-fill"></i> 복습 완료';
+
+
+    button.disabled = true;
+
+
+    /*
+        복습 완료 개수 증가
+    */
+
+    const completeCount =
+        document.getElementById(
+            "reviewCompleteCount"
+        );
+
+
+    const remainCount =
+        document.getElementById(
+            "reviewRemainCount"
+        );
+
+
+    completeCount.innerText =
+        Number(completeCount.innerText) + 1;
+
+
+    const remain =
+        Math.max(
+            0,
+            Number(remainCount.innerText) - 1
+        );
+
+
+    remainCount.innerText = remain;
+
+
+    /*
+        실제 서비스에서는 AJAX로 서버 저장
+
+        fetch('/exam/wrong-note/review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                questionNo: questionNo
+            })
+        });
+    */
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+server:
+  port: 9090
+spring:
+  # 데이터베이스 설정 (다중 DB 바인딩용 커스텀 프로퍼티)
+  datasource:
+    postgres:
+      jdbc-url: ${POST_URL}
+      username: postgres
+      password: "1234"
+      driver-class-name: org.postgresql.Driver 
+    oracle:
+      jdbc-url: ${DB_URL}
+      username: hr
+      password: happy
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+
+  ai:
+    google:
+      genai:
+        api-key: ${GEN_KEY}
+        project-id: gen-lang-client-0663941457
+        location: us-central1
+        chat:
+          model: gemini-3.6-flash
+        embedding:
+          api-key: ${GEN_KEY}
+          project-id: gen-lang-client-0663941457
+          text: 
+            options:
+              model: gemini-embedding-001
+              dimensions: 768
+    model: 
+      embedding:
+        text: google-genai
+
+# MyBatis 설정
+mybatis:
+  type-aliases-package: com.sist.web.vo
+  mapper-locations: 
+    - classpath:/mapper/oracle/*.xml
+    - classpath:/mapper/postgres/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

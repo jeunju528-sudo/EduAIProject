@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI 시험문제 자동출제 | EduAI Campus</title>
+
+
+    <!-- =====================================================
+         Bootstrap
+    ====================================================== -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- =====================================================
+         Bootstrap Icons
+    ====================================================== -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <!-- =====================================================
+         Pretendard
+    ====================================================== -->
+
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+
+    <style>
+
+        * {
+            font-family: Pretendard, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            color: #20263a;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ====================================================== */
+
+        .navbar {
+            height: 70px;
+            background: #ffffff;
+            border-bottom: 1px solid #e9ebf2;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #5146e5;
+        }
+
+        .logo:hover {
+            color: #4036c8;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ====================================================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            top: 70px;
+
+            left: 0;
+
+            width: 240px;
+
+            height: calc(100vh - 70px);
+
+            background: #171a3a;
+
+            padding: 25px 15px;
+
+        }
+
+        .sidebar-title {
+
+            color: #858baa;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            padding: 10px 15px;
+
+            margin-top: 10px;
+
+        }
+
+        .sidebar a {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: #c8cbe0;
+
+            text-decoration: none;
+
+            padding: 13px 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 4px;
+
+            transition: .2s;
+
+        }
+
+        .sidebar a:hover {
+
+            background: rgba(255,255,255,.08);
+
+            color: white;
+
+        }
+
+        .sidebar a.active {
+
+            background: #5146e5;
+
+            color: white;
+
+        }
+
+
+        /* =====================================================
+           MAIN
+        ====================================================== */
+
+        .main {
+
+            margin-left: 240px;
+
+            padding: 35px;
+
+        }
+
+
+        /* =====================================================
+           PAGE HEADER
+        ====================================================== */
+
+        .page-header {
+
+            margin-bottom: 30px;
+
+        }
+
+        .page-title {
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+        }
+
+        .page-description {
+
+            color: #8a91a5;
+
+            margin-top: 8px;
+
+        }
+
+
+        /* =====================================================
+           AI HEADER
+        ====================================================== */
+
+        .ai-header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #171a3a,
+                    #5146e5
+                );
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            color: white;
+
+            margin-bottom: 25px;
+
+        }
+
+        .ai-header-icon {
+
+            width: 60px;
+
+            height: 60px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: rgba(255,255,255,.15);
+
+            border-radius: 17px;
+
+            font-size: 28px;
+
+        }
+
+        .ai-header h4 {
+
+            font-weight: 800;
+
+        }
+
+        .ai-header p {
+
+            color: rgba(255,255,255,.7);
+
+            margin-bottom: 0;
+
+        }
+
+
+        /* =====================================================
+           CARD
+        ====================================================== */
+
+        .card-custom {
+
+            background: white;
+
+            border: none;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 7px 30px rgba(30,35,60,.06);
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .card-title {
+
+            font-size: 18px;
+
+            font-weight: 800;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        /* =====================================================
+           FORM
+        ====================================================== */
+
+        .form-label {
+
+            font-weight: 700;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+
+        }
+
+        .form-control,
+        .form-select {
+
+            border: 1px solid #e1e4ed;
+
+            border-radius: 10px;
+
+            padding: 12px 14px;
+
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+
+            border-color: #5146e5;
+
+            box-shadow:
+                0 0 0 3px rgba(81,70,229,.10);
+
+        }
+
+
+        /* =====================================================
+           TYPE BUTTON
+        ====================================================== */
+
+        .type-group {
+
+            display: flex;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+
+        }
+
+        .type-btn {
+
+            border: 1px solid #dfe2eb;
+
+            background: white;
+
+            color: #666d80;
+
+            padding: 10px 18px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            transition: .2s;
+
+        }
+
+        .type-btn:hover {
+
+            border-color: #5146e5;
+
+            color: #5146e5;
+
+        }
+
+        .type-btn.active {
+
+            background: #5146e5;
+
+            border-color: #5146e5;
+
+            color: white;
+
+        }
+
+
+        /* =====================================================
+           DIFFICULTY
+        ====================================================== */
+
+        .difficulty-group {
+
+            display: flex;
+
+            gap: 8px;
+
+        }
+
+        .difficulty-btn {
+
+            flex: 1;
+
+            border: 1px solid #e1e4ed;
+
+            background: white;
+
+            padding: 11px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+        }
+
+        .difficulty-btn.active {
+
+            background: #5146e5;
+
+            color: white;
+
+            border-color: #5146e5;
+
+        }
+
+
+        /* =====================================================
+           GENERATE BUTTON
+        ====================================================== */
+
+        .generate-btn {
+
+            width: 100%;
+
+            border: none;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #5146e5,
+                    #7659ff
+                );
+
+            transition: .2s;
+
+        }
+
+        .generate-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 25px rgba(81,70,229,.25);
+
+        }
+
+
+        /* =====================================================
+           RESULT
+        ====================================================== */
+
+        .result-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .question-card {
+
+            border: 1px solid #e7e9f0;
+
+            border-radius: 15px;
+
+            padding: 22px;
+
+            margin-bottom: 15px;
+
+            background: white;
+
+        }
+
+
+        .question-number {
+
+            width: 36px;
+
+            height: 36px;
+
+            border-radius: 10px;
+
+            background: #eeeaff;
+
+            color: #5146e5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: 800;
+
+        }
+
+
+        .question-title {
+
+            font-weight: 700;
+
+            line-height: 1.6;
+
+        }
+
+
+        .option {
+
+            border: 1px solid #e8eaf0;
+
+            padding: 12px 15px;
+
+            border-radius: 10px;
+
+            margin-top: 8px;
+
+        }
+
+
+        .option.correct {
+
+            background: #ecfdf3;
+
+            border-color: #34d399;
+
+            color: #047857;
+
+        }
+
+
+        .question-meta {
+
+            font-size: 13px;
+
+            color: #7d8498;
+
+        }
+
+
+        .question-actions {
+
+            display: flex;
+
+            gap: 6px;
+
+        }
+
+
+        /* =====================================================
+           EMPTY
+        ====================================================== */
+
+        .empty-result {
+
+            text-align: center;
+
+            padding: 80px 20px;
+
+            color: #969caf;
+
+        }
+
+        .empty-result i {
+
+            font-size: 60px;
+
+            color: #c9cce0;
+
+        }
+
+
+        /* =====================================================
+           LOADING
+        ====================================================== */
+
+        .loading {
+
+            display: none;
+
+            text-align: center;
+
+            padding: 70px;
+
+        }
+
+        .loading.active {
+
+            display: block;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media(max-width: 992px) {
+
+            .sidebar {
+
+                display: none;
+
+            }
+
+            .main {
+
+                margin-left: 0;
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================== -->
+
+<nav class="navbar navbar-expand-lg sticky-top">
+
+    <div class="container-fluid px-4">
+
+
+        <a
+                class="navbar-brand logo"
+                th:href="@{/}">
+
+            <i class="bi bi-mortarboard-fill"></i>
+
+            EduAI Campus
+
+        </a>
+
+
+        <div class="ms-auto d-flex align-items-center">
+
+
+            <span class="text-secondary me-3">
+
+                관리자
+
+            </span>
+
+
+            <a
+                    th:href="@{/}"
+                    class="btn btn-outline-secondary btn-sm">
+
+                <i class="bi bi-house me-1"></i>
+
+                홈
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="sidebar-title">
+
+        LMS 관리
+
+    </div>
+
+
+    <a th:href="@{/admin}">
+
+        <i class="bi bi-speedometer2"></i>
+
+        대시보드
+
+    </a>
+
+
+    <a th:href="@{/admin/student}">
+
+        <i class="bi bi-people"></i>
+
+        학생 관리
+
+    </a>
+
+
+    <a th:href="@{/admin/course}">
+
+        <i class="bi bi-book"></i>
+
+        강의 관리
+
+    </a>
+
+
+    <a
+            th:href="@{/admin/exam}"
+            class="active">
+
+        <i class="bi bi-pencil-square"></i>
+
+        시험 관리
+
+    </a>
+
+
+    <a th:href="@{/admin/attendance}">
+
+        <i class="bi bi-calendar-check"></i>
+
+        출결 관리
+
+    </a>
+
+
+    <div class="sidebar-title">
+
+        AI 관리
+
+    </div>
+
+
+    <a
+            th:href="@{/admin/exam/ai-create}"
+            class="active">
+
+        <i class="bi bi-stars"></i>
+
+        AI 문제 자동출제
+
+    </a>
+
+
+    <a th:href="@{/admin/ai/student}">
+
+        <i class="bi bi-robot"></i>
+
+        AI 학습분석
+
+    </a>
+
+
+    <a th:href="@{/admin/ai/recommend}">
+
+        <i class="bi bi-lightbulb"></i>
+
+        학습 추천
+
+    </a>
+
+
+</aside>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================== -->
+
+<main class="main">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            🤖 AI 시험문제 자동출제
+
+        </div>
+
+
+        <div class="page-description">
+
+            강의 내용과 출제 조건을 기반으로 AI가 시험문제를 자동으로 생성합니다.
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         AI HEADER
+    ====================================================== -->
+
+    <div class="ai-header">
+
+        <div class="d-flex align-items-center gap-3">
+
+
+            <div class="ai-header-icon">
+
+                <i class="bi bi-stars"></i>
+
+            </div>
+
+
+            <div>
+
+                <h4 class="mb-1">
+
+                    AI Question Generator
+
+                </h4>
+
+
+                <p>
+
+                    Spring AI + Gemini를 이용한 시험문제 자동 생성
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             LEFT
+        ================================================== -->
+
+        <div class="col-lg-4">
+
+
+            <div class="card-custom">
+
+
+                <div class="card-title">
+
+                    <i class="bi bi-sliders me-2 text-primary"></i>
+
+                    출제 조건
+
+                </div>
+
+
+
+                <!-- 강의 -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        강의 선택
+
+                    </label>
+
+
+                    <select
+                            id="courseNo"
+                            class="form-select">
+
+                        <option value="">
+
+                            강의를 선택하세요
+
+                        </option>
+
+
+                        <option value="1">
+
+                            Java 객체지향 프로그래밍
+
+                        </option>
+
+
+                        <option value="2">
+
+                            Spring Boot 백엔드 개발
+
+                        </option>
+
+
+                        <option value="3">
+
+                            Spring AI + RAG 프로젝트
+
+                        </option>
+
+
+                        <option value="4">
+
+                            AWS Docker CI/CD
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- 문제 수 -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        문제 수
+
+                    </label>
+
+
+                    <input
+                            id="questionCount"
+                            type="number"
+                            class="form-control"
+                            value="10"
+                            min="1"
+                            max="50">
+
+                </div>
+
+
+
+                <!-- 문제 유형 -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        문제 유형
+
+                    </label>
+
+
+                    <div class="type-group">
+
+
+                        <button
+                                type="button"
+                                class="type-btn active"
+                                data-type="객관식">
+
+                            객관식
+
+                        </button>
+
+
+                        <button
+                                type="button"
+                                class="type-btn"
+                                data-type="단답형">
+
+                            단답형
+
+                        </button>
+
+
+                        <button
+                                type="button"
+                                class="type-btn"
+                                data-type="서술형">
+
+                            서술형
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 난이도 -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        난이도
+
+                    </label>
+
+
+                    <div class="difficulty-group">
+
+
+                        <button
+                                type="button"
+                                class="difficulty-btn"
+                                data-difficulty="초급">
+
+                            초급
+
+                        </button>
+
+
+                        <button
+                                type="button"
+                                class="difficulty-btn active"
+                                data-difficulty="중급">
+
+                            중급
+
+                        </button>
+
+
+                        <button
+                                type="button"
+                                class="difficulty-btn"
+                                data-difficulty="고급">
+
+                            고급
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 주제 -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        출제 주제
+
+                    </label>
+
+
+                    <input
+                            id="theme"
+                            type="text"
+                            class="form-control"
+                            placeholder="예: Spring MVC, REST API, Security">
+
+
+                </div>
+
+
+
+                <!-- 배점 -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        문제당 배점
+
+                    </label>
+
+
+                    <div class="input-group">
+
+
+                        <input
+                                id="score"
+                                type="number"
+                                class="form-control"
+                                value="10">
+
+
+                        <span class="input-group-text">
+
+                            점
+
+                        </span>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 생성 -->
+
+                <button
+                        type="button"
+                        id="generateBtn"
+                        class="generate-btn">
+
+
+                    <i class="bi bi-stars me-2"></i>
+
+                    AI 문제 생성
+
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT
+        ================================================== -->
+
+        <div class="col-lg-8">
+
+
+            <div class="card-custom">
+
+
+                <!-- 결과 HEADER -->
+
+                <div class="result-header">
+
+
+                    <div>
+
+                        <div class="card-title mb-1">
+
+                            생성된 문제
+
+                        </div>
+
+
+                        <small
+                                id="questionCountText"
+                                class="text-secondary">
+
+                            아직 생성된 문제가 없습니다.
+
+                        </small>
+
+                    </div>
+
+
+                    <button
+                            id="saveAllBtn"
+                            class="btn btn-primary"
+                            style="display:none;">
+
+
+                        <i class="bi bi-check2-circle me-1"></i>
+
+                        전체 승인 및 저장
+
+
+                    </button>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     LOADING
+                ================================================== -->
+
+                <div
+                        id="loading"
+                        class="loading">
+
+
+                    <div
+                            class="spinner-border text-primary mb-3">
+
+                    </div>
+
+
+                    <h5>
+
+                        AI가 문제를 생성하고 있습니다.
+
+                    </h5>
+
+
+                    <p class="text-secondary">
+
+                        강의 내용과 출제 조건을 분석하고 있습니다.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     EMPTY
+                ================================================== -->
+
+                <div
+                        id="emptyResult"
+                        class="empty-result">
+
+
+                    <i class="bi bi-file-earmark-text"></i>
+
+
+                    <h5 class="mt-3">
+
+                        생성된 문제가 없습니다.
+
+                    </h5>
+
+
+                    <p>
+
+                        왼쪽에서 출제 조건을 설정하고<br>
+
+                        AI 문제 생성 버튼을 눌러주세요.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     QUESTION LIST
+                ================================================== -->
+
+                <div id="questionList">
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script>
+
+
+    /* =========================================================
+       선택된 문제 유형
+    ========================================================== */
+
+    let selectedTypes = ["객관식"];
+
+
+    /* =========================================================
+       선택된 난이도
+    ========================================================== */
+
+    let selectedDifficulty = "중급";
+
+
+    /* =========================================================
+       생성된 문제
+    ========================================================== */
+
+    let generatedQuestions = [];
+
+
+
+    /* =========================================================
+       문제 유형 버튼
+    ========================================================== */
+
+    document.querySelectorAll(".type-btn")
+        .forEach(button => {
+
+            button.addEventListener("click", function () {
+
+
+                const type =
+                    this.dataset.type;
+
+
+                /*
+                 * 선택 / 해제
+                 */
+
+                if (selectedTypes.includes(type)) {
+
+                    selectedTypes =
+                        selectedTypes.filter(
+                            item => item !== type
+                        );
+
+                    this.classList.remove("active");
+
+                }
+                else {
+
+                    selectedTypes.push(type);
+
+                    this.classList.add("active");
+
+                }
+
+
+                /*
+                 * 아무것도 선택하지 않은 경우
+                 */
+
+                if (selectedTypes.length === 0) {
+
+                    selectedTypes = ["객관식"];
+
+                    document
+                        .querySelector('[data-type="객관식"]')
+                        .classList.add("active");
+
+                }
+
+            });
+
+        });
+
+
+
+    /* =========================================================
+       난이도 버튼
+    ========================================================== */
+
+    document.querySelectorAll(".difficulty-btn")
+        .forEach(button => {
+
+            button.addEventListener("click", function () {
+
+
+                document
+                    .querySelectorAll(".difficulty-btn")
+                    .forEach(btn =>
+                        btn.classList.remove("active")
+                    );
+
+
+                this.classList.add("active");
+
+
+                selectedDifficulty =
+                    this.dataset.difficulty;
+
+            });
+
+        });
+
+
+
+    /* =========================================================
+       AI 문제 생성
+    ========================================================== */
+
+    document
+        .getElementById("generateBtn")
+        .addEventListener("click", generateQuestions);
+
+
+
+    async function generateQuestions() {
+
+
+        /* ================================================
+           입력값
+        ================================================= */
+
+        const courseNo =
+            document.getElementById("courseNo").value;
+
+
+        const questionCount =
+            document.getElementById("questionCount").value;
+
+
+        const theme =
+            document.getElementById("theme").value;
+
+
+        const score =
+            document.getElementById("score").value;
+
+
+
+        /* ================================================
+           강의 체크
+        ================================================= */
+
+        if (!courseNo) {
+
+            alert("강의를 선택해주세요.");
+
+            return;
+
+        }
+
+
+
+        /* ================================================
+           Loading
+        ================================================= */
+
+        document
+            .getElementById("emptyResult")
+            .style.display = "none";
+
+
+        document
+            .getElementById("questionList")
+            .innerHTML = "";
+
+
+        document
+            .getElementById("loading")
+            .classList.add("active");
+
+
+        document
+            .getElementById("generateBtn")
+            .disabled = true;
+
+
+
+        try {
+
+
+            /* ============================================
+               Spring Boot API
+            ============================================= */
+
+            const response =
+                await fetch(
+                    "/admin/exam/ai-generate",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            courseNo:
+                                Number(courseNo),
+
+                            questionCount:
+                                Number(questionCount),
+
+                            types:
+                                selectedTypes,
+
+                            difficulty:
+                                selectedDifficulty,
+
+                            theme:
+                                theme,
+
+                            score:
+                                Number(score)
+
+                        })
+
+                    }
+                );
+
+
+
+            /* ============================================
+               오류
+            ============================================= */
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "AI 문제 생성 실패"
+                );
+
+            }
+
+
+
+            /* ============================================
+               JSON
+            ============================================= */
+
+            generatedQuestions =
+                await response.json();
+
+
+
+            renderQuestions(
+                generatedQuestions
+            );
+
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "AI 문제 생성 중 오류가 발생했습니다."
+            );
+
+
+            document
+                .getElementById("emptyResult")
+                .style.display = "block";
+
+        }
+        finally {
+
+
+            document
+                .getElementById("loading")
+                .classList.remove("active");
+
+
+            document
+                .getElementById("generateBtn")
+                .disabled = false;
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       문제 출력
+    ========================================================== */
+
+    function renderQuestions(questions) {
+
+
+        const container =
+            document.getElementById("questionList");
+
+
+        container.innerHTML = "";
+
+
+        if (!questions ||
+            questions.length === 0) {
+
+
+            document
+                .getElementById("emptyResult")
+                .style.display = "block";
+
+
+            return;
+
+        }
+
+
+
+        /* =====================================================
+           문제 수 표시
+        ====================================================== */
+
+        document
+            .getElementById("questionCountText")
+            .innerText =
+                questions.length +
+                "개의 문제가 생성되었습니다.";
+
+
+
+        /* =====================================================
+           저장 버튼
+        ====================================================== */
+
+        document
+            .getElementById("saveAllBtn")
+            .style.display = "block";
+
+
+
+        /* =====================================================
+           문제 반복
+        ====================================================== */
+
+        questions.forEach(
+            (question, index) => {
+
+
+                const card =
+                    document.createElement("div");
+
+
+                card.className =
+                    "question-card";
+
+
+                card.innerHTML = `
+
+                    <div class="d-flex justify-content-between">
+
+                        <div class="d-flex gap-3">
+
+                            <div class="question-number">
+
+                                ${index + 1}
+
+                            </div>
+
+                            <div>
+
+                                <div class="question-title">
+
+                                    ${question.title}
+
+                                </div>
+
+                                <div class="question-meta mt-2">
+
+                                    <span class="badge bg-light text-dark me-1">
+
+                                        ${question.type || "객관식"}
+
+                                    </span>
+
+                                    <span class="badge bg-light text-dark me-1">
+
+                                        ${question.difficulty || "중급"}
+
+                                    </span>
+
+                                    <span>
+
+                                        ${question.score || 10}점
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="question-actions">
+
+                            <button
+                                    class="btn btn-sm btn-outline-secondary"
+                                    onclick="editQuestion(${index})">
+
+                                <i class="bi bi-pencil"></i>
+
+                            </button>
+
+
+                            <button
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="deleteQuestion(${index})">
+
+                                <i class="bi bi-trash"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-4">
+
+                        ${renderOptions(question, index)}
+
+                    </div>
+
+
+                    <div class="mt-3 p-3 rounded"
+                         style="background:#f7f7fb;">
+
+                        <div class="small fw-bold mb-1">
+
+                            <i class="bi bi-lightbulb me-1 text-warning"></i>
+
+                            AI 해설
+
+                        </div>
+
+                        <div class="small text-secondary">
+
+                            ${question.explanation || "해설이 없습니다."}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(card);
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       보기 출력
+    ========================================================== */
+
+    function renderOptions(question, index) {
+
+
+        if (question.type !== "객관식") {
+
+            return `
+
+                <div class="p-3 rounded bg-light">
+
+                    <strong>정답</strong>
+
+                    <span class="ms-2">
+
+                        ${question.answer || ""}
+
+                    </span>
+
+                </div>
+
+            `;
+
+        }
+
+
+        const options = [
+
+            question.option1,
+
+            question.option2,
+
+            question.option3,
+
+            question.option4
+
+        ];
+
+
+        return options.map(
+            (option, i) => {
+
+
+                const number = i + 1;
+
+
+                const correct =
+                    String(question.answer)
+                    === String(number);
+
+
+                return `
+
+                    <div class="option ${correct ? "correct" : ""}">
+
+                        <strong>
+
+                            ${number}.
+
+                        </strong>
+
+                        ${option || ""}
+
+                        ${
+                            correct
+                            ? `
+                                <span class="float-end">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    정답
+
+                                </span>
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+    }
+
+
+
+    /* =========================================================
+       문제 삭제
+    ========================================================== */
+
+    function deleteQuestion(index) {
+
+
+        if (!confirm(
+            "이 문제를 삭제하시겠습니까?"
+        )) {
+
+            return;
+
+        }
+
+
+        generatedQuestions.splice(
+            index,
+            1
+        );
+
+
+        renderQuestions(
+            generatedQuestions
+        );
+
+    }
+
+
+
+    /* =========================================================
+       문제 수정
+    ========================================================== */
+
+    function editQuestion(index) {
+
+
+        const question =
+            generatedQuestions[index];
+
+
+        const title =
+            prompt(
+                "문제를 수정하세요.",
+                question.title
+            );
+
+
+        if (title === null) {
+
+            return;
+
+        }
+
+
+        question.title = title;
+
+
+        renderQuestions(
+            generatedQuestions
+        );
+
+    }
+
+
+
+    /* =========================================================
+       전체 승인 및 DB 저장
+    ========================================================== */
+
+    document
+        .getElementById("saveAllBtn")
+        .addEventListener(
+            "click",
+            saveAllQuestions
+        );
+
+
+
+    async function saveAllQuestions() {
+
+
+        if (
+            generatedQuestions.length === 0
+        ) {
+
+            alert(
+                "저장할 문제가 없습니다."
+            );
+
+            return;
+
+        }
+
+
+
+        if (
+            !confirm(
+                "생성된 모든 문제를 시험문제로 저장하시겠습니까?"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+
+        const courseNo =
+            document.getElementById("courseNo").value;
+
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/admin/exam/ai-save",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            courseNo:
+                                Number(courseNo),
+
+                            questions:
+                                generatedQuestions
+
+                        })
+
+                    }
+                );
+
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "저장 실패"
+                );
+
+            }
+
+
+
+            alert(
+                "AI 생성 문제가 시험문제로 저장되었습니다."
+            );
+
+
+            location.href =
+                "/admin/exam";
+
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "문제 저장 중 오류가 발생했습니다."
+            );
+
+        }
+
+    }
+
+</script>
+
+
+
+<!-- =========================================================
+     Bootstrap JS
+========================================================== -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>
